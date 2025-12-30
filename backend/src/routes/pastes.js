@@ -5,7 +5,7 @@ import { now } from "../utils/time.js";
 const router = express.Router();
 
 /* ---------------- CREATE PASTE ---------------- */
-router.post("/api/pastes", async (req, res) => {
+router.post("/pastes", async (req, res) => {
   const { content, ttl_seconds, max_views } = req.body;
 
   // Validation
@@ -44,7 +44,7 @@ router.post("/api/pastes", async (req, res) => {
 });
 
 /* ---------------- FETCH JSON ---------------- */
-router.get("/api/pastes/:id", async (req, res) => {
+router.get("/pastes/:id", async (req, res) => {
   const currentTime = now(req);
 
   const paste = await Paste.findOneAndUpdate(
