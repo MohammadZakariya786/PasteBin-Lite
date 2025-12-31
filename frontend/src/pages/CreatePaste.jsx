@@ -2,6 +2,7 @@ import { useState } from "react";
 import { API } from "../api";
 
 export default function CreatePaste() {
+  const [success, setSuccess] = useState(false);
   const [content, setContent] = useState("");
   const [ttl, setTtl] = useState("");
   const [views, setViews] = useState("");
@@ -10,9 +11,22 @@ export default function CreatePaste() {
   const [copied, setCopied] = useState(false);
 
   const submit = async () => {
-    setLoading(true);
-    setCopied(false);
+  if (!content.trim()) return;
 
+  if (ttl && Number(ttl) < 1) {
+    alert("TTL must be at least 1 second");
+    return;
+  }
+
+  if (views && Number(views) < 1) {
+    alert("Max views must be at least 1");
+    return;
+  }
+  setUrl("");
+  setLoading(true);
+  setCopied(false);
+
+  try {
     const res = await fetch(`${API}/api/pastes`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -24,9 +38,23 @@ export default function CreatePaste() {
     });
 
     const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error || "Failed to create paste");
+      setLoading(false);
+      return;
+    }
+
     setUrl(data.url);
+    setSuccess(true);
+    setTimeout(() => setSuccess(false), 2500);
+  } catch (err) {
+    alert("Network error");
+  } finally {
     setLoading(false);
-  };
+  }
+};
+
 
   const copyUrl = async () => {
     await navigator.clipboard.writeText(url);
@@ -48,11 +76,15 @@ export default function CreatePaste() {
       <div className="controls">
         <input
           type="number"
+          min="1"
+          step="1"
           placeholder="TTL (seconds)"
           onChange={e => setTtl(e.target.value)}
         />
         <input
           type="number"
+          min="1"
+          step="1"
           placeholder="Max views"
           onChange={e => setViews(e.target.value)}
         />
@@ -72,13 +104,17 @@ export default function CreatePaste() {
       </button>
 
       {url && (
-        <div className="result">
-          <input readOnly value={url} />
+        <div className="result fade-in">
+          {success && <p className="success-text">✅ Paste created successfully!</p>}
+
+          <input readOnly value={url}  onFocus={e => e.target.select()} />
+
           <button onClick={copyUrl}>
             {copied ? "Copied!" : "Copy"}
           </button>
         </div>
       )}
+
     </div>
   );
 }
