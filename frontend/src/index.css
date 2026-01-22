@@ -148,5 +148,8 @@ body {
 .success-text {
   color: #2ea44f;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin: 10px auto;
+  display: block;
+  text-align: center;
+  width: fit-content;
 }
