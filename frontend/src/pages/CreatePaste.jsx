@@ -105,8 +105,6 @@ export default function CreatePaste() {
 
       {url && (
         <div className="result fade-in">
-          {success && <p className="success-text">✅ Paste created successfully!</p>}
-
           <input readOnly value={url}  onFocus={e => e.target.select()} />
 
           <button onClick={copyUrl}>
@@ -114,6 +112,7 @@ export default function CreatePaste() {
           </button>
         </div>
       )}
+      {success && <p className="success-text">✅ Paste created successfully!</p>}
 
     </div>
   );
